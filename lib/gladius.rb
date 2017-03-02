@@ -7,3 +7,4 @@ end
 
 require_relative "gladius/version"
 require_relative "gladius/agent"
+require_relative "gladius/resource"

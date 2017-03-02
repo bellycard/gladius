@@ -65,5 +65,19 @@ end
 
 # routes
 Rails.application.routes.draw do
-  jsonapi_resources :posts, only: [:index, :create]
+  jsonapi_resources :posts
+end
+
+
+RSpec.configure do |config|
+  config.before(:suite) do
+    DatabaseCleaner.strategy = :transaction
+    DatabaseCleaner.clean_with(:truncation)
+  end
+
+  config.around(:each) do |example|
+    DatabaseCleaner.cleaning do
+      example.run
+    end
+  end
 end
