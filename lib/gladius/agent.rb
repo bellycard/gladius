@@ -3,6 +3,8 @@ require "ostruct"
 require "faraday"
 require "addressable/uri"
 require "addressable/template"
+require "json"
+
 module Gladius
   # This is the basic client agent.
   class Agent
@@ -18,7 +20,8 @@ module Gladius
       unless response.headers["Content-Type"] == "application/vnd.api+json"
         raise "Something Wrong"
       end
-      JSON.parse(response.body, symbolize_names: true)
+      data = JSON.parse(response.body, symbolize_names: true)[:data]
+      data.map{ |d| Resource.build(d, self) }
     end
 
     def create!(attrs)
@@ -30,7 +33,7 @@ module Gladius
       unless response.headers["Content-Type"] == "application/vnd.api+json"
         raise "Something Wrong"
       end
-      JSON.parse(response.body, symbolize_names: true)
+      Resource.build(JSON.parse(response.body, symbolize_names: true)[:data], self)
     end
 
     def get(id)
@@ -38,11 +41,15 @@ module Gladius
       unless response.headers["Content-Type"] == "application/vnd.api+json"
         raise "Something Wrong"
       end
-      Resource.build(JSON.parse(response.body, symbolize_names: true), self)
+      Resource.build(JSON.parse(response.body, symbolize_names: true)[:data], self)
     end
 
     def patch(resource)
-      _conn.patch(member_uri_template.expand(id: resource.id), resource.to_jsonapi_hash.to_json)
+      response = _conn.patch(member_uri_template.expand(id: resource.id), resource.to_jsonapi_hash.to_json)
+      unless response.headers["Content-Type"] == "application/vnd.api+json"
+        raise "Something Wrong"
+      end
+      Resource.build(JSON.parse(response.body, symbolize_names: true)[:data], self)
     end
 
     private

@@ -5,7 +5,7 @@ module Gladius
   class Resource < OpenStruct
     attr_accessor :_agent
     def self.build(data, agent)
-      type, id, attrs = data[:data].values_at(:type, :id, :attributes)
+      type, id, attrs = data.values_at(:type, :id, :attributes)
       resource = new(attrs.merge(id: id, type: type))
       resource._agent = agent
       resource
