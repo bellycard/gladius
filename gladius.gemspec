@@ -33,11 +33,16 @@ Gem::Specification.new do |spec|
   spec.require_paths = ["lib"]
 
   spec.add_dependency "faraday", "~> 0.11.0"
+  # spec.add_dependency "faraday_middleware", "~> 0.11.0"
 
   spec.add_development_dependency "bundler", "~> 1.14"
+  spec.add_development_dependency "database_cleaner", "~> 1.5.3"
+  spec.add_development_dependency "jsonapi-resources", "~> 0.9.0"
+  spec.add_development_dependency "railties", "~> 5.0.2"
   spec.add_development_dependency "rake", "~> 10.0"
   spec.add_development_dependency "rspec", "~> 3.5.0"
   spec.add_development_dependency "rspec_junit_formatter", "~> 0.2.3"
   spec.add_development_dependency "pronto", "~> 0.8.0"
   spec.add_development_dependency "pronto-rubocop", "~> 0.8.0"
+  spec.add_development_dependency "sqlite3", "~> 1.3.13"
 end
