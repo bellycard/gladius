@@ -21,32 +21,27 @@ module Gladius
       handle_response(response)
     end
 
-    def create!(attrs)
-      type = uri.path.split("/").pop
-      response = _conn.post(uri, { data: {
-        type: type,
-        attributes: attrs
-      } }.to_json)
+    def create(resource)
+      response = _conn.post(uri, resource.to_jsonapi_hash.to_json)
       check_response(response)
       handle_response(response)
     end
 
     def get(id)
       response = _conn.get(member_uri_template.expand(id: id))
-      unless response.headers["Content-Type"] == "application/vnd.api+json"
-        raise "Something Wrong"
-      end
       check_response(response)
       handle_response(response)
     end
 
-    def patch(resource)
+    def update(resource)
       response = _conn.patch(member_uri_template.expand(id: resource.id), resource.to_jsonapi_hash.to_json)
-      unless response.headers["Content-Type"] == "application/vnd.api+json"
-        raise "Something Wrong"
-      end
       check_response(response)
       handle_response(response)
+    end
+
+    def new(attributes)
+      Resource.new({ type: @uri.path.split("/").last, attributes: attributes },
+                   agent: self)
     end
 
     private
@@ -70,7 +65,7 @@ module Gladius
     end
 
     def handle_data(data)
-      Resource.new(data, self)
+      Resource.new(data, agent: self, new: false)
     end
 
     def member_uri_template

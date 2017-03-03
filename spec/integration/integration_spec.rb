@@ -17,11 +17,10 @@ RSpec.describe("Gladius Integration") do
     it "Allows me to create a new post and view it" do
       agent = Gladius::Agent.new("http://localhost/posts", connection: rack_faraday)
       expect do
-        post = agent.create!(title: "The title", body: "Body of post")
-        post_id = post.id
-        post = Post.find(post_id)
-        expect(post.title).to eq("The title")
-        expect(post.body).to eq("Body of post")
+        post = agent.new(title: "The title", body: "Body of post")
+        updated_post = post.save!
+        expect(updated_post.title).to eq("The title")
+        expect(updated_post.body).to eq("Body of post")
       end.to change(Post, :count).by(1)
     end
 
