@@ -2,26 +2,35 @@ require "ostruct"
 
 module Gladius
   # A class which enables us to pleasantly interact with jsonapi documents.
-  class Resource < OpenStruct
-    attr_accessor :_agent
-    def self.build(data, agent)
-      type, id, attrs = data.values_at(:type, :id, :attributes)
-      resource = new(attrs.merge(id: id, type: type))
-      resource._agent = agent
-      resource
+  class Resource
+    attr_accessor :_agent, :data, :type, :id
+
+    def initialize(data, agent)
+      @type, @id, attrs = *data.values_at(:type, :id, :attributes)
+      @_agent = agent
+      @data = OpenStruct.new(attrs)
     end
 
     def to_jsonapi_hash
-      attributes = @table.dup
+      attributes = @data.dup
       { data: {
-        id: attributes.delete(:id),
-        type: attributes.delete(:type),
-        attributes: attributes
+        id: id,
+        type: type,
+        attributes: attributes.to_h
       } }
     end
 
     def save!
       _agent.patch(self)
+    end
+
+    def respond_to_missing?(meth, *_args, &_block)
+      @data.respond_to?(meth)
+    end
+
+    def method_missing(meth, *args, &block)
+      super unless @data.respond_to?(meth)
+      @data.send(meth, *args, &block)
     end
   end
 end

@@ -24,3 +24,6 @@ Metrics/BlockLength:
   ExcludedMethods:
     - "configure"
     - "describe"
+
+Metrics/MethodLength:
+  Max: 13

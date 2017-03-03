@@ -17,11 +17,8 @@ module Gladius
 
     def index
       response = _conn.get(uri)
-      unless response.headers["Content-Type"] == "application/vnd.api+json"
-        raise "Something Wrong"
-      end
-      data = JSON.parse(response.body, symbolize_names: true)[:data]
-      data.map{ |d| Resource.build(d, self) }
+      check_response(response)
+      handle_response(response)
     end
 
     def create!(attrs)
@@ -30,10 +27,8 @@ module Gladius
         type: type,
         attributes: attrs
       } }.to_json)
-      unless response.headers["Content-Type"] == "application/vnd.api+json"
-        raise "Something Wrong"
-      end
-      Resource.build(JSON.parse(response.body, symbolize_names: true)[:data], self)
+      check_response(response)
+      handle_response(response)
     end
 
     def get(id)
@@ -41,7 +36,8 @@ module Gladius
       unless response.headers["Content-Type"] == "application/vnd.api+json"
         raise "Something Wrong"
       end
-      Resource.build(JSON.parse(response.body, symbolize_names: true)[:data], self)
+      check_response(response)
+      handle_response(response)
     end
 
     def patch(resource)
@@ -49,10 +45,33 @@ module Gladius
       unless response.headers["Content-Type"] == "application/vnd.api+json"
         raise "Something Wrong"
       end
-      Resource.build(JSON.parse(response.body, symbolize_names: true)[:data], self)
+      check_response(response)
+      handle_response(response)
     end
 
     private
+
+    def check_response(response)
+      ct = response.headers["Content-Type"]
+      raise "Something Wrong" unless ct == "application/vnd.api+json"
+    end
+
+    def handle_response(response)
+      parsed = JSON.parse(response.body, symbolize_names: true)
+      raise "Error #{parsed}" if parsed.key?(:errors)
+      case parsed[:data]
+      when Array
+        parsed[:data].map { |d| handle_data(d) }
+      when Hash
+        handle_data(parsed[:data])
+      else
+        raise "Don't know what this is"
+      end
+    end
+
+    def handle_data(data)
+      Resource.new(data, self)
+    end
 
     def member_uri_template
       Addressable::Template.new(uri.dup.to_s + "/{id}")
