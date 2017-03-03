@@ -68,7 +68,6 @@ Rails.application.routes.draw do
   jsonapi_resources :posts
 end
 
-
 RSpec.configure do |config|
   config.before(:suite) do
     DatabaseCleaner.strategy = :transaction

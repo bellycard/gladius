@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 require "ostruct"
 
 module Gladius
@@ -38,11 +39,11 @@ module Gladius
       @data.send(meth, *args, &block)
     end
 
-    def to_s
+    def to_s # rubocop:disable Metrics/AbcSize
       attributes = data.dup.to_h.to_a
       length = attributes.map(&:first).max_by(&:length).length
       print "#{type[0].upcase}#{type[1..-1]}: #{id}\n"
-      attributes.map{|d| [length] + d}.each do |attr|
+      attributes.map { |d| [length] + d }.each do |attr|
         print format("%*s: %s", *attr) + "\n"
       end
       nil

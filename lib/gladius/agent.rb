@@ -34,7 +34,8 @@ module Gladius
     end
 
     def update(resource)
-      response = _conn.patch(member_uri_template.expand(id: resource.id), resource.to_jsonapi_hash.to_json)
+      update_uri = member_uri_template.expand(id: resource.id)
+      response = _conn.patch(update_uri, resource.to_jsonapi_hash.to_json)
       check_response(response)
       handle_response(response)
     end
