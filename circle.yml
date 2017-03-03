@@ -1,5 +1,4 @@
 machine:
-  # Version of ruby to use
   ruby:
     version:
       ruby-2.4.0
