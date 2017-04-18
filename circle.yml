@@ -1,5 +1,4 @@
 machine:
-  # Version of ruby to use
   ruby:
     version:
       ruby-2.4.0
@@ -7,6 +6,10 @@ machine:
 checkout:
   post:
     - git fetch origin --depth=1000000
+
+dependencies:
+  pre:
+    - gem install bundler
 
 test:
   override:

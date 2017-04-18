@@ -1,8 +1,26 @@
 # Gladius
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/gladius`. To experiment with that code, run `bin/console` for an interactive prompt.
+Gladius is a zero-setup tool for accessing JSONAPI Resources.
 
-TODO: Delete this and the text above, and describe your gem
+```ruby
+agent = Gladius::Agent.new("http://jsonapi-example.com/posts")
+post = agent.index[0]
+print post
+Posts: 0223c8ea-0c31-4901-b20e-99123b408e08
+  author_id: 80013143-e3fe-435e-8d86-b3da896625fa
+       name: Great Post
+  post_type: blog
+#<Gladius::Resource:0x007f83a98fefb0>=> nil
+
+post.name = "Even Better"
+updated_post = post.save!
+print updated_post
+Posts: 0223c8ea-0c31-4901-b20e-99123b408e08
+  author_id: 80013143-e3fe-435e-8d86-b3da896625fa
+       name: Even Better
+  post_type: blog
+#<Gladius::Resource:0x007f83a8bea6f8>=> nil
+```
 
 ## Installation
 
@@ -22,7 +40,22 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+First start up a `Gladius::Agent` with a root resource URI:
+
+```ruby
+agent = Gladius::Agent.new("https://jsonapi-example.org/users")
+```
+
+* `#index` returns `Resource`-wrapped resuls from `GET`.
+* `#get(id)` makes a `GET` call to the member(id) path of the base.
+* `#new(attributes)` creates a new `Resource`.
+
+When you have a `Resource`:
+
+* `#<attribute>`: Returns value of attribute
+* `#<attribute>=`: Sets the value
+* `#save!`: Create or Update the resource
+* `#to_s`: Pretty print the resource
 
 ## Development
 

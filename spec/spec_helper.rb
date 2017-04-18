@@ -1,3 +1,7 @@
+# frozen_string_literal: true
+$LOAD_PATH << File.join(File.dirname(__FILE__), "support")
+require "gladius"
+require "database_cleaner"
 
 # frozen_string_literal: true
 RSpec.configure do |config|
@@ -80,4 +84,7 @@ RSpec.configure do |config|
   # test failures related to randomization by passing the same `--seed` value
   # as the one that triggered the failure.
   Kernel.srand config.seed
+
+  require "rack_faraday_helper"
+  config.include RackFaradayHelper
 end

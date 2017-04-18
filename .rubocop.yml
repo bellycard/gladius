@@ -21,3 +21,9 @@ Metrics/LineLength:
 Metrics/BlockLength:
   Exclude:
     - "gladius.gemspec"
+  ExcludedMethods:
+    - "configure"
+    - "describe"
+
+Metrics/MethodLength:
+  Max: 13
